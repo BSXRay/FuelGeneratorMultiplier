@@ -1,0 +1,23 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0.0",
+	"FriendlyName": "Fuel Generator Multiplier",
+	"Description": "Multiplies the electrical output of Fuel-Powered Generators by a configurable factor. Fuel consumption, burn rate and all other generator properties are left untouched.",
+	"RequiredOnRemote": false,
+	"GameVersion": ">=491125",
+	"SemVersion": "1.0.0",
+	"Modules": [
+		{
+			"Name": "FuelGeneratorMultiplier",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "SML",
+			"SemVersion": "^3.12.0"
+		}
+	]
+}
