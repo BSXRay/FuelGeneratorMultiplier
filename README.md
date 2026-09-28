@@ -61,14 +61,46 @@ On dedicated servers there is no configuration screen, so edit the file and rest
 
 ## Installation
 
-Release archives are published on the [Satisfactory Mod Repository](https://ficsit.app). To install manually, copy the mod folder
-into the game's mod directory:
+This is a **native C++ mod**, so it cannot be installed as source: it has to be compiled once, because the game cannot load
+uncompiled C++ code. There are two ways to get a working build into your game.
+
+### Option A - Alpakit (recommended: compiles, packages and installs in one step)
+
+This is the workflow the SML documentation prescribes.
+
+1. Set up the modding environment once: Satisfactory, Visual Studio 2022, the custom Unreal Engine `5.6.1-CSS`, Wwise
+   `2023.1.14.8770` and the [Starter Project](https://docs.ficsit.app/Development/BeginnersGuide/dependencies.html).
+   See the [Required Software](https://docs.ficsit.app/Development/BeginnersGuide/dependencies.html) page for details.
+2. Clone this repository into the Starter Project, so the plugin ends up at `<StarterProject>/Mods/FuelGeneratorMultiplier/`.
+   SML must be present at `<StarterProject>/Mods/SML`.
+3. Open `FactoryGame.uproject` in Unreal and open the **Alpakit Dev** panel (`File > Alpakit Dev`).
+4. Under **Dev Packaging Settings > Windows**, tick `Enabled`, tick `Copy to Game Path`, and point it at your game install
+   directory, for example `C:\Program Files\EpicGames\SatisfactoryEarlyAccess\`.
+   Also tick `Launch Game Type` if you want Alpakit to start the game for you once packaging is done.
+5. Press the **`Alpakit!`** button next to `Fuel Generator Multiplier (FuelGeneratorMultiplier)`.
+
+Alpakit compiles the module, packages the plugin and copies it into the game installation's `Mods` directory. Start the game and
+the multiplier is available under `Mods > Fuel Generator Multiplier > Config`.
+
+To uninstall, delete the `FuelGeneratorMultiplier` folder from that same `Mods` directory.
+
+### Option B - Manual copy
+
+If you already have a compiled build, copy the whole plugin folder including the compiled binary into the game's mod directory:
 
 ```
 <Satisfactory>/FactoryGame/Mods/FuelGeneratorMultiplier/
 ```
 
-SML discovers the plugin automatically, no `Mods.json` entry is required.
+It has to contain at least `FuelGeneratorMultiplier.uplugin` and the compiled
+`Binaries/Win64/FuelGeneratorMultiplier.dll`. SML discovers the plugin automatically, no `Mods.json` entry is required.
+
+Prefer Alpakit if you can: it also sets the per-target `GameFeature` field and the `Binaries` layout that SML expects.
+
+### No effect in the editor
+
+Hooks are **not** installed in editor builds (`WITH_EDITOR`), because applying function hooks at editor time is unreliable. There
+will be no visible effect while playing inside the editor - test in the packaged game, which is what Alpakit produces.
 
 ### Multiplayer
 
@@ -76,19 +108,29 @@ The mod is server authoritative. Install it on the server (or on the listen serv
 not need the mod, the `.uplugin` declares `"RequiredOnRemote": false` and the multiplied value arrives through normal property
 replication.
 
-## Building from source
+## Packaging a release
 
-The mod expects to live inside a Satisfactory Starter Project.
+To build a distributable archive:
 
-1. Clone this repository into the Starter Project's `Mods` directory, so that the plugin is found at
-   `<StarterProject>/Mods/FuelGeneratorMultiplier/`.
-2. Make sure SML `3.12.0` or newer is present at `<StarterProject>/Mods/SML`.
-3. Regenerate the Visual Studio project files for `FactoryGame.uproject`, then build the `Development Editor` `Win64` target of
-   `FactoryGame` with the editor closed.
-4. For a dedicated server, build the `Shipping Server` `Win64` target of `FactoryGame`.
+1. Open `File > Alpakit Release`.
+2. Under **Release Targets**, tick all three targets: `Windows`, `Windows Server` and `Linux Server`. A C++ mod has to be compiled
+   separately for every target, and leaving one out makes the mod fail to load on that platform. For local singleplayer testing
+   you can skip this and use the `Alpakit Dev` workflow from Option A instead.
+3. Press the **`Alpakit!`** button next to your mod and wait for the packaging to finish. The first run compiles the additional
+   targets and therefore takes noticeably longer.
 
-Per the SML native hooking documentation, hooks are **not** installed in editor builds (`WITH_EDITOR`), because applying function
-hooks at editor time is unreliable. Use Alpakit `Release` (or a packaged build) to observe the effect in game.
+Alpakit writes the result to:
+
+```
+<StarterProject>/Saved/ArchivedPlugins/FuelGeneratorMultiplier/FuelGeneratorMultiplier.zip
+```
+
+That multi-target zip is the file to upload to the [Satisfactory Mod Repository](https://ficsit.app). After the first release run,
+a folder button appears in the mod's row in the Alpakit Release window that opens exactly that directory.
+
+If you change any fields in the `.uplugin`, re-Alpak the mod before uploading, so the packaged descriptor contains your changes.
+
+Do not add a `GameFeature` field to the `.uplugin` yourself - Alpakit sets it per target when it packages a release.
 
 ## Verification checklist
 
@@ -125,6 +167,13 @@ Mods/FuelGeneratorMultiplier/
         ├── Settings/FuelGeneratorMultiplierSettings.cpp
         └── UI/UFGMPowerMultiplierWidget.cpp
 ```
+
+## License
+
+Distributed under the terms of the **GNU General Public License v3.0**. The full text is in [LICENSE](LICENSE).
+
+GPL-3.0 was chosen because the mod links against and is loaded at runtime by
+[Satisfactory Mod Loader](https://github.com/satisfactorymodding/SatisfactoryModLoader), which is itself GPL-3.0.
 
 ## Status
 

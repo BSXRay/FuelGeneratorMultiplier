@@ -2,22 +2,30 @@
 	"FileVersion": 3,
 	"Version": 1,
 	"VersionName": "1.0.0",
+	"SemVersion": "1.0.0",
 	"FriendlyName": "Fuel Generator Multiplier",
 	"Description": "Multiplies the electrical output of Fuel-Powered Generators by a configurable factor. Fuel consumption, burn rate and all other generator properties are left untouched.",
+	"Category": "Modding",
+	"CreatedBy": "BSXRay",
+	"CreatedByURL": "https://github.com/BSXRay",
+	"DocsURL": "https://github.com/BSXRay/FuelGeneratorMultiplier",
+	"SupportURL": "https://github.com/BSXRay/FuelGeneratorMultiplier/issues",
 	"RequiredOnRemote": false,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false,
 	"GameVersion": ">=491125",
-	"SemVersion": "1.0.0",
 	"Modules": [
 		{
 			"Name": "FuelGeneratorMultiplier",
 			"Type": "Runtime",
-			"LoadingPhase": "Default"
+			"LoadingPhase": "PostDefault"
 		}
 	],
 	"Plugins": [
 		{
 			"Name": "SML",
-			"SemVersion": "^3.12.0"
+			"SemVersion": "^3.12.0",
+			"Enabled": true
 		}
 	]
 }
